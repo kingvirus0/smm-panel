@@ -74,7 +74,7 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-8811924751:AAHKaq5yNf_1Q9PmHG77YIS8xf4KW-g41L4}
       BACKEND_API_URL: http://backend:8000
     depends_on:
       backend:

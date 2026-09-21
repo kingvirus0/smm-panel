@@ -8,22 +8,26 @@ cd "$(dirname "$0")"
 
 echo "Starting SMM Panel..."
 
-# Start Docker services (PostgreSQL, Redis, Backend, Celery, Bot, Frontend)
+# Kill any existing ngrok
+pkill -f "ngrok http" 2>/dev/null || true
+sleep 1
+
+# Start Docker services
 echo "[1/3] Starting Docker services..."
 docker-compose up -d postgres redis
 
 echo "Waiting for database..."
 sleep 5
 
-docker-compose up -d backend celery-worker celery-beat bot
+docker-compose up -d --build backend celery-worker celery-beat bot
 
 echo "[2/3] Starting ngrok tunnel..."
 ngrok http 8000 --log=stdout > /tmp/ngrok.log &
 NGROK_PID=$!
-sleep 3
+sleep 4
 
 # Get ngrok URL
-NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | python3 -c "import sys,json; print(json.load(sys.stdin)['tunnels'][0]['public_url'])" 2>/dev/null || echo "")
+NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin)['tunnels'][0]['public_url'])" 2>/dev/null || echo "")
 
 if [ -n "$NGROK_URL" ]; then
     echo ""
@@ -39,7 +43,8 @@ if [ -n "$NGROK_URL" ]; then
     echo "ngrok panel:   http://127.0.0.1:4040"
     echo ""
 else
-    echo "ngrok failed to start. Check /tmp/ngrok.log"
+    echo "ngrok failed. Checking logs..."
+    tail -5 /tmp/ngrok.log 2>/dev/null
 fi
 
 echo "[3/3] All services running!"
