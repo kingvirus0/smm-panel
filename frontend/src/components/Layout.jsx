@@ -1,13 +1,14 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, ShoppingCart, Clock, Wallet, Users, Settings, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Clock, Wallet, Users, Settings, LogOut, Menu, X, PlusCircle } from 'lucide-react';
 import { useState } from 'react';
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/services', icon: ShoppingCart, label: 'Services' },
   { to: '/orders', icon: Clock, label: 'Orders' },
-  { to: '/topup', icon: Wallet, label: 'Top Up' },
+  { to: '/addfunds', icon: PlusCircle, label: 'Add Funds' },
+  { to: '/topup', icon: Wallet, label: 'Manual Top Up' },
   { to: '/referrals', icon: Users, label: 'Referrals' },
 ];
 
@@ -53,7 +54,7 @@ export default function Layout() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-dark-200">{user?.username}</p>
-              <p className="text-xs text-dark-500">${user?.balance || '0.00'}</p>
+              <p className="text-xs text-dark-500">₦{user?.balance || '0.00'}</p>
             </div>
             <button onClick={logoutUser} className="text-dark-400 hover:text-red-400"><LogOut size={18} /></button>
           </div>

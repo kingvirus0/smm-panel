@@ -2,6 +2,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.router import api_router
+from app.api.v1.payments_gateway import router as payment_router
+from app.api.v1.webhooks import router as webhook_router
 from app.config import get_settings
 from app.database import engine, Base
 
@@ -25,12 +27,14 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL, "http://localhost:5173"],
+    allow_origins=[settings.FRONTEND_URL, "http://localhost:5173", "*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+app.include_router(webhook_router, prefix="/api/webhooks")
+app.include_router(payment_router, prefix="/api/v1/payments")
 app.include_router(api_router, prefix="/api/v1")
 
 

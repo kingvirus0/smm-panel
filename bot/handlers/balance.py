@@ -1,6 +1,6 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
-from bot.api_client import get_me, topup, APIError
+from bot.api_client import get_me, APIError
 
 
 async def balance_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -12,62 +12,34 @@ async def balance_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         user = await get_me(token)
         context.user_data["user"] = user
+        balance = float(user.get("balance", 0))
+        earnings = float(user.get("affiliate_earnings", 0))
+
+        buttons = [
+            [InlineKeyboardButton("Add Funds", callback_data="fund_start")],
+            [InlineKeyboardButton("Order History", callback_data="show_orders")],
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+
         await update.message.reply_text(
-            f"Balance: ${user['balance']}\n"
-            f"Referral Earnings: ${user['affiliate_earnings']}"
+            f"*Your Wallet*\n\n"
+            f"Balance: *₦{balance:,.2f}*\n"
+            f"Referral Earnings: *₦{earnings:,.2f}*\n\n"
+            f"Use /fund to add money to your wallet.",
+            parse_mode="Markdown",
+            reply_markup=reply_markup,
         )
     except APIError as e:
         await update.message.reply_text(f"Error: {e}")
 
 
 async def topup_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    token = context.user_data.get("token")
-    if not token:
-        await update.message.reply_text("Please /login first")
-        return
-
-    keyboard = [
-        [InlineKeyboardButton("USDT (TRC20)", callback_data="topup_crypto_usdt")],
-        [InlineKeyboardButton("Bitcoin", callback_data="topup_crypto_btc")],
-        [InlineKeyboardButton("Bank Transfer", callback_data="topup_manual_bank")],
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
-        "Select payment method:\n\n"
-        "After sending payment, use:\n"
-        "/topupconfirm amount method tx_reference\n"
-        "Example: /topupconfirm 50 crypto_usdt ABC123XYZ",
-        reply_markup=reply_markup,
+        "Use /fund to add money to your wallet via Paystack or Flutterwave."
     )
 
 
 async def topup_confirm_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    token = context.user_data.get("token")
-    if not token:
-        await update.message.reply_text("Please /login first")
-        return
-
-    parts = update.message.text.split()
-    if len(parts) < 3:
-        await update.message.reply_text(
-            "Usage: /topupconfirm amount method tx_reference\n"
-            "Methods: crypto_usdt, crypto_btc, manual_bank, manual_other"
-        )
-        return
-
-    try:
-        amount = float(parts[1])
-        method = parts[2]
-        tx_ref = parts[3] if len(parts) > 3 else None
-
-        result = await topup(token, amount, method, tx_ref)
-        await update.message.reply_text(
-            f"Top-up request submitted!\n"
-            f"Amount: ${amount}\n"
-            f"Method: {method}\n"
-            f"Status: Pending approval"
-        )
-    except APIError as e:
-        await update.message.reply_text(f"Error: {e}")
-    except ValueError:
-        await update.message.reply_text("Invalid amount")
+    await update.message.reply_text(
+        "Use /fund for instant payments via card or mobile money."
+    )

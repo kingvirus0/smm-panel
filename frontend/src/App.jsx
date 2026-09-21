@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard';
 import Services from './pages/Services';
 import OrderHistory from './pages/OrderHistory';
 import TopUp from './pages/TopUp';
+import AddFunds from './pages/AddFunds';
+import PaymentVerify from './pages/PaymentVerify';
 import Referrals from './pages/Referrals';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageServices from './pages/admin/ManageServices';
@@ -35,6 +37,8 @@ function App() {
             <Route path="services" element={<Services />} />
             <Route path="orders" element={<OrderHistory />} />
             <Route path="topup" element={<TopUp />} />
+            <Route path="addfunds" element={<AddFunds />} />
+            <Route path="payment/verify" element={<PaymentVerify />} />
             <Route path="referrals" element={<Referrals />} />
             <Route path="admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
             <Route path="admin/services" element={<ProtectedRoute adminOnly><ManageServices /></ProtectedRoute>} />

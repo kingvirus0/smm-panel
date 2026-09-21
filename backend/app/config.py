@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     PRM4U_API_KEY: str = ""
     REFERRAL_COMMISSION_RATE: float = 0.05
     FRONTEND_URL: str = "http://localhost:5173"
+    PAYSTACK_SECRET_KEY: str = ""
+    PAYSTACK_PUBLIC_KEY: str = ""
+    FLUTTERWAVE_SECRET_KEY: str = ""
+    FLUTTERWAVE_WEBHOOK_SECRET: str = ""
 
     class Config:
         env_file = ".env"
