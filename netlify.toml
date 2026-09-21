@@ -1,0 +1,11 @@
+[build]
+  command: npm run dev
+  directory: frontend/
+
+[proxy]
+  [proxy.environment]
+    VITE_API_URL = "/"
+  [[redirects]]
+    from = "/api/*"
+    to = "http://localhost:8000/api/:splat"
+    status = 200
